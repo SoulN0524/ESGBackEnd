@@ -27,3 +27,4 @@ for i in docs:
     print(i.page_content)
     print('_________')
 
+
