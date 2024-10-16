@@ -25,5 +25,6 @@ db=pdf_loader('sustainable_report\台積電esgreport.pdf',500,50)
 docs = db.similarity_search(query,k=3)
 for i in docs:
     print(i.page_content)
-    print('_________')
+    print('______')
+
 
