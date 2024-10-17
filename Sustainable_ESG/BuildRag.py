@@ -20,6 +20,8 @@ def pdf_loader(file,size,overlap):
   db = FAISS.from_documents(new_doc, OpenAIEmbeddings())
   return db
 
+
+"HIHIHI"
 query="公司近期的永續政策是甚麼?"
 db=pdf_loader('sustainable_report\台積電esgreport.pdf',500,50)
 docs = db.similarity_search(query,k=3)
