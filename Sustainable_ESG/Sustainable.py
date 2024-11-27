@@ -427,15 +427,15 @@ def Parse_EmissionTable(companyName, year, html, ESG,company_sex, company_Flow):
     return data
 
 def Get_112_EmissionData():
-    greenHouse=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112溫室氣體.csv")
-    waterManage=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112水資源管理.csv")
-    wasteManage=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112廢棄物管理.csv")
-    renewableManage=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112再生能源.csv")
-    employeeManage=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112人力發展.csv")
-    president=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112董事會.csv")
-    committee=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112功能性委員會.csv")
-    inventor=pd.read_csv("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\上市112投資人溝通.csv")
-    esg=pd.read_excel("C:\\Users\\user\\OneDrive\\桌面\\專題\\Sustainable_ESG\\專題esg平台資料.xlsx")
+    greenHouse=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112溫室氣體.csv")
+    waterManage=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112水資源管理.csv")
+    wasteManage=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112廢棄物管理.csv")
+    renewableManage=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112再生能源.csv")
+    employeeManage=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112人力發展.csv")
+    president=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112董事會.csv")
+    committee=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112功能性委員會.csv")
+    inventor=pd.read_csv("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\上市112投資人溝通.csv")
+    esg=pd.read_excel("C:\\Users\\user\\Desktop\\專題\\Sustainable_ESG\\專題esg平台資料.xlsx")
     CorpID=greenHouse["公司代號"].values
     emission={}
     for id in CorpID:
@@ -463,12 +463,12 @@ def Get_112_EmissionData():
                 CorpESG = esg[esg["代號"] == id].values[0]
                 merged_data.append(CorpESG[2])
             except IndexError:
-                merged_data.append(0)  # 或者其他處理方式
+                merged_data.append("")  # 或者其他處理方式
             emission[id]=merged_data
         except:
             continue
     dataFrame=pd.DataFrame.from_dict(emission,orient="index",columns=column)
-    dataFrame.to_csv("112年Listed_info_emission_Mod.csv",encoding='utf-8-sig')
+    dataFrame.to_csv("112年Listed_info_emission.csv",encoding='utf-8-sig')
 
     
 def Get_Listed_Mission(companySet):
@@ -516,13 +516,13 @@ def Get_Listed_Mission(companySet):
     return companySet
 
 def esg_combine():
-    esg_score=pd.read_excel(r"C:\Users\user\OneDrive\桌面\專題\Sustainable_ESG\上市公司ESG資訊\兆豐ESG平台分數.xlsx")
-    data=pd.read_csv(r"C:\Users\user\OneDrive\桌面\專題\Sustainable_ESG\上市公司ESG資訊\112年Listed_info_emission_Mod.csv",encoding='utf-8-sig')
+    esg_score=pd.read_excel(r"C:\Users\user\Desktop\ESGBackEnd\兆豐ESG平台分數.xlsx")
+    data=pd.read_csv(r"C:\Users\user\Desktop\ESGBackEnd\112年Listed_info_emission_原檔.csv",encoding='utf-8-sig')
     merged_data = pd.merge(data, esg_score[['股票代號', 'ESG','E','S','G']], on="股票代號", how="left")
-    merged_data.to_csv("112年ListedInfoEmission.csv",encoding='utf-8-sig')
+    merged_data.to_csv("112年Emission_兆豐ESG.csv",encoding='utf-8-sig')
     
 if __name__ == "__main__":
-
+    Get_112_EmissionData()
 
     #載入前100家ESG優良企業排放資訊、個股資訊
     # get_pdf(111)
@@ -580,8 +580,10 @@ if __name__ == "__main__":
     #     newData.loc[newData["公司名稱"] == i, "投資組合"] = listed
 
     # newData.to_csv(r'C:\Users\user\OneDrive\桌面\專題\Sustainable_ESG\updated_ListedInfo.csv', index=False, encoding='utf-8-sig')
-    esg_combine()
-    
+    #esg_combine()
+    data=pd.read_csv(r"C:\Users\user\Desktop\ESGBackEnd\112年Emission_兆豐ESG.csv",encoding='utf-8-sig')
+    data=data.replace("--","")
+    data.to_csv(r"C:\Users\user\Desktop\ESGBackEnd\112年Emission_兆豐ESG.csv",encoding='utf-8-sig')
 
         
     
