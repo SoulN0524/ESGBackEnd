@@ -45,12 +45,12 @@ def catch_businesstoday(company_name):
     for paragraph in p_elements:
         p+=paragraph.get_text()
     news.append([company_name,title,link,p])
-  df=pd.DataFrame(news,columns=columns)
+ # df=pd.DataFrame(news,columns=columns)
   print(df)
 
 
 def catch_CSR(company_name):
-  company_name="台積電"
+  #company_name="台積電"
   browser=init_browser()
   search_url=f"https://csr.cw.com.tw/search/doSearch.action?keyword={company_name}&channel=0"
   browser.get(search_url)
