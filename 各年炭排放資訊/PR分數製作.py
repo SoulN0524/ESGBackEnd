@@ -1,6 +1,6 @@
 import pandas as pd
 
-data=pd.read_csv(r"C:\Users\lin78\OneDrive\桌面\ESGBackEnd\各年炭排放資訊\112年Listed_Info_Emission_KNN補值.csv",encoding='utf-8-sig')
+data=pd.read_csv(r"C:\Users\lin78\OneDrive\桌面\ESGBackEnd\各年炭排放資訊\111年Listed_Info_Emission_KNN補值.csv",encoding='utf-8-sig')
 data=data.dropna()
 data=data[data["產業類別"]!="其他"]
 #print(data.dtypes)
@@ -69,14 +69,14 @@ def Create_ESG(industry):
       # 計算距離欄位
       try:
         IndustryData[f"{col}_distance"] = abs(data[col] - 0.5)
-        print(f"成功生成距離欄位 {col}_distance")
+        #print(f"成功生成距離欄位 {col}_distance")
       except Exception as e:
-        print(f"生成距離欄位 {col}_distance 時發生錯誤: {e}")
+        #print(f"生成距離欄位 {col}_distance 時發生錯誤: {e}")
         continue
       #print(IndustryData.columns)  # 檢查 DataFrame 的所有欄位名稱
       #print(IndustryData[[col, f"{col}_distance"]].head())  # 檢查新生成的欄位
       if f"{col}_distance" not in IndustryData.columns:
-        print(f"警告: 欄位 {col}_distance 不存在，跳過此部分")
+        #print(f"警告: 欄位 {col}_distance 不存在，跳過此部分")
         continue
       Industry=IndustryData.sort_values(by=f"{col}_distance",ascending=True)
       PR=99+PR_Violatility
@@ -99,10 +99,10 @@ def Create_ESG(industry):
           company_index=i
       try:
         IndustryData.drop(columns=[f"{col}_distance"], inplace=True)
-        print(f"已刪除欄位: {col}_distance")
+        #print(f"已刪除欄位: {col}_distance")
       except KeyError:
         print(f"警告: 欄位 {col}_distance 不存在，無法刪除")
-
+    
     else:
       Industry=IndustryData.sort_values(by=col)
       PR=99+PR_Violatility
@@ -127,4 +127,4 @@ def Create_ESG(industry):
 for i in data["產業類別"].unique():
   ESG=Create_ESG(i)
 data["ESG_ByPR"]=data[Compare_Columns].mean(axis=1).round().astype(int)
-data.to_csv("112年碳排放PR處理.csv",encoding='utf-8-sig')
+data.to_csv("111年碳排放PR處理.csv",encoding='utf-8-sig')
