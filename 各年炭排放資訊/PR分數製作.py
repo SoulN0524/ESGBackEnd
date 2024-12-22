@@ -126,5 +126,11 @@ def Create_ESG(industry):
 
 for i in data["產業類別"].unique():
   ESG=Create_ESG(i)
+E_column=["用水量(公噸)","使用率(再生能源/總能源)" , "用水密集度-密集度(公噸/單位)" ,"範疇一-排放量(噸CO2e)" ,"範疇二-排放量(噸CO2e)" ,"範疇三-排放量(噸CO2e)" ,"溫室氣體排放密集度-密集度(噸CO2e/單位)","有害廢棄物量-數據(公噸)" ,"非有害廢棄物量-數據(公噸)","總重量(有害+非有害)-數據(公噸)" ,"廢棄物密集度-密集度(公噸/單位)" ]
+data["E"]=data[E_column].mean(axis=1).round().astype(int)
+S_column=["員工福利平均數(仟元/人)" ,"員工薪資平均數(仟元/人)" ,"非擔任主管職務之全時員工薪資平均數(仟元/人)" ,"非擔任主管之全時員工薪資中位數(仟元/人)" ,"職業災害人數及比率-人數","職業災害人數及比率-比率"]
+data["S"]=data[S_column].mean(axis=1).round().astype(int)
+G_column=["董事席次(含獨立董事)(席)" ,"管理職女性主管占比" ,"獨立董事席次(席)" ,"女性董事席次及比率-比率","董事出席董事會出席率","公司年度召開法說會次數(次)"]
+data["G"]=data[G_column].mean(axis=1).round().astype(int)
 data["ESG_ByPR"]=data[Compare_Columns].mean(axis=1).round().astype(int)
 data.to_csv("111年碳排放PR處理.csv",encoding='utf-8-sig')
