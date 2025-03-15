@@ -31,60 +31,43 @@ def catch_businesstoday(company_name,page):#這只能抓到2022年10-11月的資
     search_url = f'https://esg.businesstoday.com.tw/group_search/get_articles_by_keyword?keywords={company_name}&page={i+1}'
     print("連結"+search_url)
     # 送出 GET 請求
-    response =requests.get(search_url, headers=headers)
     try:
-        data = response.json()  
-    except requests.exceptions.JSONDecodeError:
-        print("回應非JSON格式或為空：", response.text)
-    items=data["article_list"]
-    if items is None:
-      break
-    for item in items:
-      date=item["url_query"][:8]
-      title=item["title"]
-      link=item["href"]
-      p=item["part_text"].strip()
-      p=re.sub(r'\t|\n|\r','',p)
-      news.append({
-        "公司名稱":company_name,
-        "日期":date,
-        "新聞標題":title,
-        "新聞連結":link,
-        "新聞內容":p,
-        "新聞來源":"ESG今周刊"})
-      
-  return news
+        response = requests.get(search_url, headers=headers)
+        response.raise_for_status()  # 檢查 HTTP 狀態碼
 
-<<<<<<< HEAD
+        try:
+            data = response.json()
+        except requests.exceptions.JSONDecodeError:
+            print("無法解析 JSON，回應內容:", response.text)
+            continue
+        
+        items = data.get("article_list", [])
+        if not items:
+            print(f"頁面 {i+1} 沒有找到新聞")
+            break
+        
+        for item in items:
+            date = item.get("url_query", "")[:8]
+            title = item.get("title", "無標題")
+            link = item.get("href", "無連結")
+            p = item.get("part_text", "").strip()
+            p = re.sub(r'\t|\n|\r', '', p)
+
+            news.append({
+                "公司名稱": company_name,
+                "日期": date,
+                "新聞標題": title,
+                "新聞連結": link,
+                "新聞內容": p,
+                "新聞來源": "ESG今周刊"
+            })
+    except requests.RequestException as e:
+        print(f"HTTP 請求錯誤: {e}")
+        continue
+
+    return news
+
 def CSR_dealer(json_data):
-=======
-  # 送出 GET 請求
-  data =requests.get(search_url, headers=headers).json()
-  items=data["article_list"]
-  columns=['股名','標題','連結','內容']
-  news=[]
-
-  for item in items:
-    print("----------------------------------")
-    print("新聞"+str(item))
-    print("日期:"+str(item[""]))
-    news_id=item["id"]
-    title=item["title"]
-    link=item["href"]
-    url=requests.get(link).content
-    soup=BeautifulSoup(url,'html.parser')
-    p_elements=soup.find_all('p')
-    p=""
-    for paragraph in p_elements:
-        p+=paragraph.get_text()
-    news.append([company_name,title,link,p])
- # df=pd.DataFrame(news,columns=columns)
-  print(df)
-
-
-def catch_CSR(company_name):
-  #company_name="台積電"
->>>>>>> 3c9216984ed9ce870f366d0d47b60ad8a08e2b4e
   browser=init_browser()
   for i in json_data:
     browser.get(i["新聞連結"])
@@ -103,57 +86,48 @@ def catch_CSR(company_name):
 
 
 #這個抓很久
-def catch_CSR(company_name,page):
-  browser=init_browser()
-    # 初始化結果列表
+def catch_CSR(company_name, page):
+  browser = init_browser()
   result = []
+
   for i in range(page):
-    time.sleep(5)
-    search_url=f"https://csr.cw.com.tw/search/doSearch.action?keyword={company_name}&channel=0&page={i+1}"
-    try:
-      print(search_url)
-      browser.get(search_url)
-      element = WebDriverWait(browser, 10).until(EC.visibility_of_element_located((By.XPATH, "//*[@id=\"search_vue\"]/section[2]/section")))
-      html = browser.page_source
-      soup=BeautifulSoup(html, 'html.parser')
-      # 選取文章列表中的所有 <li> 標籤
-      articles = soup.select("section.articleList ul li")
-      for article in articles:
-        # 提取標題
-        title_tag = article.select_one(".txt h2 a")
-        title = title_tag.get_text(strip=True).strip() if title_tag else "無標題"
+      time.sleep(5)
+      search_url = f"https://csr.cw.com.tw/search/doSearch.action?keyword={company_name}&channel=0&page={i+1}"
 
-        # 提取描述
-        description_tag = article.select_one(".txt p")
-        description = description_tag.get_text(strip=True) if description_tag else "無描述"
+      try:
+          print(f"抓取頁面 {i+1}: {search_url}")
+          browser.get(search_url)
 
-        # 提取鏈接
-        link = title_tag["href"] if title_tag and "href" in title_tag.attrs else "無鏈接"
-        date=""
-        # browser.get(link)
-        # html = browser.page_source
-        # soup=BeautifulSoup(html, 'html.parser')
-        # date=soup.find("li",class_="time").text()
-        # date=re.sub('-','',date)
-        # p=''
-        # p_elements=soup.find_all('p')
-        # for paragraph in p_elements:
-        #   p+=paragraph.get_text().strip()
-        # p=re.sub(r'\t|\n|\r','',p)
-        result.append({
-          '公司名稱':company_name,
-          "日期":date,
-          "新聞標題": title,
-          "新聞連結": link,
-          "新聞內容":description,
-          '新聞來源':"CSR天下"
-        })
-        print(result)
-    except:
-      browser.quit() 
+          WebDriverWait(browser, 10).until(
+              EC.visibility_of_element_located((By.XPATH, "//*[@id=\"search_vue\"]/section[2]/section"))
+          )
+
+          html = browser.page_source
+          soup = BeautifulSoup(html, 'html.parser')
+          articles = soup.select("section.articleList ul li")
+
+          for article in articles:
+              title_tag = article.select_one(".txt h2 a")
+              title = title_tag.get_text(strip=True) if title_tag else "無標題"
+              description_tag = article.select_one(".txt p")
+              description = description_tag.get_text(strip=True) if description_tag else "無描述"
+              link = title_tag["href"] if title_tag and "href" in title_tag.attrs else "無鏈接"
+              
+              result.append({
+                  '公司名稱': company_name,
+                  "日期": "",
+                  "新聞標題": title,
+                  "新聞連結": link,
+                  "新聞內容": description,
+                  '新聞來源': "CSR天下"
+              })
+      
+      except Exception as e:
+          print(f"無法獲取 CSR 天下新聞 (第 {i+1} 頁): {e}")
+          continue
+  
   browser.quit()
-  result=CSR_dealer(result)
-  print(result)
+  return CSR_dealer(result)
 
 #網頁的更多文章無法讀取
 def catch_esgtimes(company_name):
